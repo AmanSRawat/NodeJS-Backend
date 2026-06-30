@@ -20,18 +20,57 @@ const writeFilePro = (file,data)=>{
     })
 }
 
-readFilePro(`${__dirname}/dog.txt`).then(data=>{
-    console.log(`Breed: ${data}`);
+const getDogPic = async ()=>{
+    try{
+        const data = await readFilePro(`${__dirname}/dog.txt`);
+        console.log(`Breed: ${data}`);
 
-    return superagent.get(`https://dog.ceo/api/breed/${data}/images/random`)
-    }).then(res=>{
-        console.log(res.body.message);
-        return writeFilePro('dog-image.txt',res.body.message);
-    }).then(()=>{
+        const res1Pro = superagent.get(`https://dog.ceo/api/breed/${data}/images/random`);
+        const res2Pro = superagent.get(`https://dog.ceo/api/breed/${data}/images/random`);
+        const res3Pro = superagent.get(`https://dog.ceo/api/breed/${data}/images/random`);
+
+        const all = await Promise.all([res1Pro,res2Pro,res3Pro]);
+        const imgs = all.map(el=>el.body.message);
+        console.log(imgs);
+
+        await writeFilePro('dog-image.txt',imgs.join('\n'));
         console.log("Random dog image saved!");
-    }).catch(err=>{
-        console.log(err);
-    });
+    }catch(err){
+        // console.log(err);
+        throw err;
+    }
+
+    return '2: Ready';
+}
+
+(async ()=>{
+    try {
+        console.log('1: Will get dog pics!');
+        const x = await getDogPic();
+        console.log(x);
+        console.log('3: Done getting dog pics!');
+    } catch (error) {
+        console.log("Error");
+    }
+})();
+
+// console.log('1: Will get dog pics!');
+// const x = getDogPic();
+// console.log(x);
+// console.log('3: Done getting dog pics!');
+
+// readFilePro(`${__dirname}/dog.txt`).then(data=>{
+//     console.log(`Breed: ${data}`);
+
+//     return superagent.get(`https://dog.ceo/api/breed/${data}/images/random`)
+//     }).then(res=>{
+//         console.log(res.body.message);
+//         return writeFilePro('dog-image.txt',res.body.message);
+//     }).then(()=>{
+//         console.log("Random dog image saved!");
+//     }).catch(err=>{
+//         console.log(err);
+//     });
 
 // fs.readFile(`${__dirname}/dog.txt`,(err,data)=>{
 //     if(err) return console.log(err);
