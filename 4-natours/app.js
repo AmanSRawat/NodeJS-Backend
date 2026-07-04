@@ -10,6 +10,7 @@ if(process.env.NODE_ENV === 'development'){
  app.use(morgan('dev'));   
 }
 
+app.set('query parser', 'extended');
 app.use(express.json());
 app.use(express.static(`${__dirname}/public`));
 
