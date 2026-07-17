@@ -10,6 +10,7 @@ const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const AppError = require('./utils/appError'); 
 const globalErrorHandler = require('./controllers/errorControllers');
+const reviewRoute = require('./routes/reviewRouts');
 
 const app = express();
 
@@ -35,7 +36,6 @@ app.set('query parser', 'extended');
 // Body parser, reading data from body into req.body
 app.use(express.json({ limit: '10kb' }));
 
-// 🔥 FIX: Patch to make req.query mutable for Express 5 compatibility
 app.use((req, res, next) => {
   if (req.query) {
     Object.defineProperty(req, 'query', {
@@ -78,6 +78,7 @@ app.use((req, res, next) => {
 // 2) ROUTES
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/reviews', reviewRoute);
 
 app.all('*splat', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
